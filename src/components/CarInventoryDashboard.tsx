@@ -25,7 +25,12 @@ import { CarForm } from "./CarForm";
 import { AdminLogin } from "./AdminLogin";
 import { CarDetailsPage } from "./CarDetailsPage";
 import { AdminAnalytics } from "./AdminAnalytics";
-import { getCarsApi, createCarApi, updateCarApi, deleteCarApi } from "../lib/api";
+import {
+  getCarsApi,
+  createCarApi,
+  updateCarApi,
+  deleteCarApi,
+} from "../lib/api";
 
 /* ----------------------------- Types ----------------------------- */
 
@@ -114,6 +119,9 @@ export function CarInventoryDashboard() {
 
   const uniqueMakes = Array.from(new Set(cars.map((c) => c.make))).sort();
 
+  /* ------------------------- CRUD handlers ------------------------- */
+
+  // Create: show the new car immediately after a successful POST
   const handleAddCar = async (carData: Omit<Car, "id">) => {
     try {
       const created = await createCarApi(carData);
@@ -129,7 +137,7 @@ export function CarInventoryDashboard() {
     try {
       const updated = await updateCarApi(editingCar.id, carData);
       setCars((prev) =>
-        prev.map((c) => (c.id === editingCar.id ? (updated as Car) : c)),
+        prev.map((c) => (c.id === editingCar.id ? (updated as Car) : c))
       );
       setEditingCar(null);
       setShowCarForm(false);
@@ -205,15 +213,19 @@ export function CarInventoryDashboard() {
 
   // Consistent hover/lift/shadow for action buttons
   const actionBtn =
-    "transition-all duration-200 border border-border shadow-sm hover:-translate-y-0.5 hover:shadow-md hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-primary/30";
+    "transition-all duration-200 border border-border shadow-sm " +
+    "hover:-translate-y-0.5 hover:shadow-md hover:bg-white/5 " +
+    "focus-visible:ring-2 focus-visible:ring-primary/30";
 
-  // Consistent hover/focus styling for inputs & selects (trigger)
+  // Consistent hover/focus styling for inputs & selects
   const fieldHover =
-    "transition-all duration-200 border border-border hover:border-primary/40 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-primary/30";
+    "transition-all duration-200 border border-border hover:border-primary/40 " +
+    "hover:shadow-sm focus-visible:ring-2 focus-visible:ring-primary/30";
 
   // Menu (dropdown) container styling for Select
   const menuContent =
-    "rounded-xl border border-border/60 shadow-lg bg-popover/95 backdrop-blur supports-[backdrop-filter]:bg-popover/75";
+    "rounded-xl border border-border/60 shadow-lg bg-popover/95 backdrop-blur " +
+    "supports-[backdrop-filter]:bg-popover/75";
 
   // Individual option styling for SelectItem
   const itemClass =
@@ -241,7 +253,7 @@ export function CarInventoryDashboard() {
               <Button
                 variant="outline"
                 onClick={() => setShowLogin(true)}
-                className={actionBtn} // ← same border/hover/shadow as the admin buttons
+                className={actionBtn}
               >
                 Admin Login
               </Button>
@@ -443,3 +455,5 @@ export function CarInventoryDashboard() {
     </div>
   );
 }
+
+export default CarInventoryDashboard;
