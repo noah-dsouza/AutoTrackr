@@ -20,11 +20,9 @@ type Props = {
 export function CarForm({ car, onSubmit, onCancel }: Props) {
   const [make, setMake] = useState(car?.make ?? "");
   const [model, setModel] = useState(car?.model ?? "");
-
   const [year, setYear] = useState<string>(car ? String(car.year) : "");
   const [price, setPrice] = useState<string>(car ? String(car.price) : "");
   const [mileage, setMileage] = useState<string>(car ? String(car.mileage) : "");
-
   const [color, setColor] = useState(car?.color ?? "");
   const [status, setStatus] = useState<Car["status"]>(car?.status ?? "available");
   const [vin, setVin] = useState(car?.vin ?? "");
@@ -34,11 +32,11 @@ export function CarForm({ car, onSubmit, onCancel }: Props) {
       "https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=800&auto=format&fit=crop"
   );
 
-  // same hover/lift/shadow style used elsewhere
+  // same outline + hover/lift + shadow used elsewhere
   const actionBtn =
-    "transition-all duration-200 shadow-sm hover:-translate-y-0.5 hover:shadow-md hover:bg-white/5";
+    "border border-white/20 rounded-xl transition-all duration-200 " +
+    "shadow-sm hover:-translate-y-0.5 hover:shadow-md";
 
-  // Avoid duplicate brands
   const normalizeMake = (s: string) =>
     s.trim().replace(/\s+/g, " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
 
@@ -46,7 +44,6 @@ export function CarForm({ car, onSubmit, onCancel }: Props) {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-
     if (!make || !model) return alert("Make and Model are required.");
     if (!year) return alert("Year is required.");
 
@@ -166,9 +163,11 @@ export function CarForm({ car, onSubmit, onCancel }: Props) {
                 </div>
 
                 <div className="md:col-span-2 flex gap-2 pt-2">
-                  <Button type="submit" className={`flex-1 ${actionBtn}`}>
+                  {/* Outline with shadow/hover */}
+                  <Button type="submit" variant="outline" className={`flex-1 ${actionBtn}`}>
                     {car ? "Save Changes" : "Add Vehicle"}
                   </Button>
+
                   <Button
                     type="button"
                     variant="outline"
