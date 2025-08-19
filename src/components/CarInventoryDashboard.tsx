@@ -1,3 +1,4 @@
+// src/components/CarInventoryDashboard.tsx
 import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
@@ -23,7 +24,7 @@ import {
 import { CarForm } from "./CarForm";
 import { AdminLogin } from "./AdminLogin";
 import { CarDetailsPage } from "./CarDetailsPage";
-import { AdminAnalytics } from "./Adminanalytics";
+import { AdminAnalytics } from "./AdminAnalytics";
 import { getCarsApi, createCarApi, updateCarApi, deleteCarApi } from "../lib/api";
 
 /* ----------------------------- Types ----------------------------- */
@@ -202,9 +203,9 @@ export function CarInventoryDashboard() {
 
   /* ------------------------------ UI helpers ------------------------------ */
 
-  // Consistent hover/lift/shadow for header action buttons
+  // Consistent hover/lift/shadow for action buttons
   const actionBtn =
-    "transition-all duration-200 shadow-sm hover:-translate-y-0.5 hover:shadow-md hover:bg-white/5";
+    "transition-all duration-200 border border-border shadow-sm hover:-translate-y-0.5 hover:shadow-md hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-primary/30";
 
   // Consistent hover/focus styling for inputs & selects (trigger)
   const fieldHover =
@@ -237,7 +238,11 @@ export function CarInventoryDashboard() {
 
           <div className="flex gap-3">
             {!isAdmin ? (
-              <Button variant="outline" onClick={() => setShowLogin(true)}>
+              <Button
+                variant="outline"
+                onClick={() => setShowLogin(true)}
+                className={actionBtn} // ← same border/hover/shadow as the admin buttons
+              >
                 Admin Login
               </Button>
             ) : (

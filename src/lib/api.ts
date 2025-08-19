@@ -1,4 +1,3 @@
-// src/lib/api.ts
 const BASE =
   (import.meta as any).env?.VITE_API_BASE?.replace(/\/$/, "") ||
   "http://localhost:4000";

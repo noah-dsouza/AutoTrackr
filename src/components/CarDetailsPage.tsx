@@ -1,4 +1,3 @@
-// src/components/CarDetailsPage.tsx
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
@@ -69,7 +68,6 @@ export function CarDetailsPage({
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-5xl mx-auto">
         <div className="mb-6">
-          {/* Back button: outlined + border + hover lift + shadow */}
           <Button
             variant="outline"
             onClick={onBack}
@@ -94,7 +92,7 @@ export function CarDetailsPage({
 
             {isAdmin && (
               <div className="flex gap-2">
-                {/* EDIT: outlined + hover elevation */}
+                {/* EDIT */}
                 <Button
                   variant="outline"
                   onClick={onEdit}
@@ -103,7 +101,7 @@ export function CarDetailsPage({
                   Edit Vehicle
                 </Button>
 
-                {/* DELETE: outlined with red border + hover elevation */}
+                {/* DELETE */}
                 <Button
                   variant="outline"
                   onClick={onDelete}
@@ -117,10 +115,10 @@ export function CarDetailsPage({
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Main Image with blurred fill + symmetrical top/bottom gradients */}
+          
           <Card className="overflow-hidden">
             <div className="relative h-[28rem] md:h-[26rem] lg:h-[28rem] bg-muted">
-              {/* Soft blurred background fill so edges never feel empty */}
+              
               <img
                 src={car.imageUrl}
                 alt=""
@@ -128,20 +126,20 @@ export function CarDetailsPage({
                 className="absolute inset-0 h-full w-full object-cover scale-110 blur-2xl opacity-40"
               />
 
-              {/* The real, fully visible image */}
+              
               <img
                 src={car.imageUrl}
                 alt={`${car.make} ${car.model}`}
                 className="relative z-10 mx-auto my-0 h-full w-full object-contain"
               />
 
-              {/* Symmetrical gradients: top + bottom */}
+              
               <div className="pointer-events-none absolute inset-x-0 top-0 h-28 md:h-24 lg:h-28 z-20 bg-gradient-to-b from-background/70 via-background/30 to-transparent" />
               <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 md:h-24 lg:h-28 z-20 bg-gradient-to-t from-background/70 via-background/30 to-transparent" />
             </div>
           </Card>
 
-          {/* Vehicle Information */}
+          {/* Vehicle Info */}
           <div className="space-y-6">
             <Card>
               <CardHeader>

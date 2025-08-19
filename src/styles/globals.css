@@ -112,7 +112,7 @@
   html, body, #root { height: 100%; }
   * { @apply border-border outline-ring/50; }
   body { @apply bg-background text-foreground font-sans antialiased; }
-  html.dark body { @apply bg-background text-foreground; } /* still respects tokens if you ever add .dark */
+  html.dark body { @apply bg-background text-foreground; } 
 }
 
 html { font-size: var(--font-size); }

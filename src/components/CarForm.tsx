@@ -12,7 +12,7 @@ import {
 import type { Car } from "./CarInventoryDashboard";
 
 type Props = {
-  car: Car | null; // editing if present, else creating
+  car: Car | null; 
   onSubmit: (carData: Omit<Car, "id">) => void;
   onCancel: () => void;
 };
@@ -21,7 +21,6 @@ export function CarForm({ car, onSubmit, onCancel }: Props) {
   const [make, setMake] = useState(car?.make ?? "");
   const [model, setModel] = useState(car?.model ?? "");
 
-  // ✅ keep numbers as strings so fields can be empty (no leading 0, no step warning)
   const [year, setYear] = useState<string>(car ? String(car.year) : "");
   const [price, setPrice] = useState<string>(car ? String(car.price) : "");
   const [mileage, setMileage] = useState<string>(car ? String(car.mileage) : "");
@@ -35,7 +34,7 @@ export function CarForm({ car, onSubmit, onCancel }: Props) {
       "https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=800&auto=format&fit=crop"
   );
 
-  // Title Case for Make to avoid duplicate brands
+  // Avoid duplicate brands
   const normalizeMake = (s: string) =>
     s.trim().replace(/\s+/g, " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
 

@@ -1,10 +1,37 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Button } from './ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { ArrowLeft, TrendingUp, DollarSign, Car as CarIcon, ShoppingCart } from 'lucide-react';
-import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import type { Car } from './CarInventoryDashboard';
+// src/components/AdminAnalytics.tsx
+import React, { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Button } from "./ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import {
+  ArrowLeft,
+  TrendingUp,
+  DollarSign,
+  Car as CarIcon,
+  ShoppingCart,
+} from "lucide-react";
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import type { Car } from "./CarInventoryDashboard";
 
 interface AdminAnalyticsProps {
   cars: Car[];
@@ -13,7 +40,20 @@ interface AdminAnalyticsProps {
 
 // Mock historical sales data
 const generateMockSalesData = () => {
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
   const currentMonth = new Date().getMonth();
 
   return months.slice(0, currentMonth + 1).map((month) => ({
@@ -29,21 +69,23 @@ const generateMockSalesData = () => {
 const mockSalesData = generateMockSalesData();
 
 export function AdminAnalytics({ cars, onBack }: AdminAnalyticsProps) {
-  const [timeFilter, setTimeFilter] = useState('ytd');
+  const [timeFilter, setTimeFilter] = useState<"mtd" | "qtd" | "ytd" | "custom">(
+    "ytd"
+  );
 
-  // Calculate key metrics
+  // Key metrics
   const totalInventory = cars.length;
-  const soldCars = cars.filter((car) => car.status === 'sold').length;
-  const availableCars = cars.filter((car) => car.status === 'available').length;
-  const pendingCars = cars.filter((car) => car.status === 'pending').length;
+  const soldCars = cars.filter((car) => car.status === "sold").length;
+  const availableCars = cars.filter((car) => car.status === "available").length;
+  const pendingCars = cars.filter((car) => car.status === "pending").length;
 
   const totalRevenue = cars
-    .filter((car) => car.status === 'sold')
+    .filter((car) => car.status === "sold")
     .reduce((sum, car) => sum + car.price, 0);
 
   const avgSellingPrice = soldCars > 0 ? Math.round(totalRevenue / soldCars) : 0;
 
-  // Prepare data for charts
+  // Data for charts
   const inventoryByMake = cars.reduce((acc, car) => {
     acc[car.make] = (acc[car.make] || 0) + 1;
     return acc;
@@ -56,53 +98,36 @@ export function AdminAnalytics({ cars, onBack }: AdminAnalyticsProps) {
   }));
 
   const statusData = [
-    { name: 'Available', value: availableCars, color: '#10b981' },
-    { name: 'Sold', value: soldCars, color: '#ef4444' },
-    { name: 'Pending', value: pendingCars, color: '#f59e0b' },
+    { name: "Available", value: availableCars, color: "#10b981" },
+    { name: "Sold", value: soldCars, color: "#ef4444" },
+    { name: "Pending", value: pendingCars, color: "#f59e0b" },
   ];
 
-  const salesByMake = cars
-    .filter((car) => car.status === 'sold')
-    .reduce((acc, car) => {
-      acc[car.make] = (acc[car.make] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-
-  const salesMakeData = Object.entries(salesByMake).map(([make, count]) => ({
-    make,
-    sales: count,
-  }));
-
-  // Calculate cumulative revenue
+  // Cumulative revenue
   const cumulativeRevenueData = mockSalesData.map((item, index) => ({
     ...item,
-    cumulative: mockSalesData.slice(0, index + 1).reduce((sum, data) => sum + data.revenue, 0),
+    cumulative: mockSalesData
+      .slice(0, index + 1)
+      .reduce((sum, data) => sum + data.revenue, 0),
   }));
-
-  // Inventory age simulation
-  const inventoryAgeData = [
-    { range: '< 30 days', count: Math.floor(availableCars * 0.4) },
-    { range: '30-60 days', count: Math.floor(availableCars * 0.35) },
-    { range: '60+ days', count: Math.floor(availableCars * 0.25) },
-  ];
 
   const getTimeFilterLabel = () => {
     switch (timeFilter) {
-      case 'mtd':
-        return 'Month to Date';
-      case 'qtd':
-        return 'Quarter to Date';
-      case 'ytd':
-        return 'Year to Date';
-      case 'custom':
-        return 'Custom Range';
+      case "mtd":
+        return "Month to Date";
+      case "qtd":
+        return "Quarter to Date";
+      case "ytd":
+        return "Year to Date";
+      case "custom":
+        return "Custom Range";
       default:
-        return 'Year to Date';
+        return "Year to Date";
     }
   };
 
   return (
-    <div className="min-h-screen bg-backround p-6">
+    <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
           <Button variant="ghost" onClick={onBack} className="mb-4">
@@ -112,10 +137,17 @@ export function AdminAnalytics({ cars, onBack }: AdminAnalyticsProps) {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-3xl mb-2">Analytics Dashboard</h1>
-              <p className="text-muted-foreground">Comprehensive sales and inventory insights</p>
+              <p className="text-muted-foreground">
+                Comprehensive sales and inventory insights
+              </p>
             </div>
             <div className="flex items-center gap-3">
-              <Select value={timeFilter} onValueChange={setTimeFilter}>
+              <Select
+                value={timeFilter}
+                onValueChange={(v) =>
+                  setTimeFilter(v as "mtd" | "qtd" | "ytd" | "custom")
+                }
+              >
                 <SelectTrigger className="w-48">
                   <SelectValue />
                 </SelectTrigger>
@@ -130,7 +162,7 @@ export function AdminAnalytics({ cars, onBack }: AdminAnalyticsProps) {
           </div>
         </div>
 
-        {/* Key Metrics Cards */}
+        {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardContent className="p-6">
@@ -176,7 +208,9 @@ export function AdminAnalytics({ cars, onBack }: AdminAnalyticsProps) {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Avg. Selling Price</p>
-                  <p className="text-2xl">${avgSellingPrice.toLocaleString()}</p>
+                  <p className="text-2xl">
+                    ${avgSellingPrice.toLocaleString()}
+                  </p>
                   <p className="text-sm text-green-600">+3.4% from last month</p>
                 </div>
                 <TrendingUp className="w-8 h-8 text-green-600" />
@@ -185,9 +219,8 @@ export function AdminAnalytics({ cars, onBack }: AdminAnalyticsProps) {
           </Card>
         </div>
 
-        {/* Charts Grid */}
+        {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* Revenue Over Time */}
           <Card>
             <CardHeader>
               <CardTitle>Revenue Over Time ({getTimeFilterLabel()})</CardTitle>
@@ -198,14 +231,23 @@ export function AdminAnalytics({ cars, onBack }: AdminAnalyticsProps) {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
-                  <Tooltip formatter={(value) => [`$${Number(value).toLocaleString()}`, 'Revenue']} />
-                  <Line type="monotone" dataKey="revenue" stroke="#3b82f6" strokeWidth={2} />
+                  <Tooltip
+                    formatter={(value) => [
+                      `$${Number(value).toLocaleString()}`,
+                      "Revenue",
+                    ]}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="revenue"
+                    stroke="#3b82f6"
+                    strokeWidth={2}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
 
-          {/* Monthly Sales Performance */}
           <Card>
             <CardHeader>
               <CardTitle>Monthly Sales Performance</CardTitle>
@@ -225,7 +267,6 @@ export function AdminAnalytics({ cars, onBack }: AdminAnalyticsProps) {
             </CardContent>
           </Card>
 
-          {/* Inventory by Make */}
           <Card>
             <CardHeader>
               <CardTitle>Inventory by Make</CardTitle>
@@ -238,7 +279,9 @@ export function AdminAnalytics({ cars, onBack }: AdminAnalyticsProps) {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    label={(entry: any) =>
+                      `${entry.name} ${((entry.percent ?? 0) * 100).toFixed(0)}%`
+                    }
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"
@@ -253,7 +296,6 @@ export function AdminAnalytics({ cars, onBack }: AdminAnalyticsProps) {
             </CardContent>
           </Card>
 
-          {/* Inventory by Status */}
           <Card>
             <CardHeader>
               <CardTitle>Inventory by Status</CardTitle>
@@ -269,7 +311,9 @@ export function AdminAnalytics({ cars, onBack }: AdminAnalyticsProps) {
                     outerRadius={80}
                     paddingAngle={5}
                     dataKey="value"
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    label={(entry: any) =>
+                      `${entry.name} ${((entry.percent ?? 0) * 100).toFixed(0)}%`
+                    }
                   >
                     {statusData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
@@ -282,8 +326,8 @@ export function AdminAnalytics({ cars, onBack }: AdminAnalyticsProps) {
           </Card>
         </div>
 
+        {/* More charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Average Selling Price Trend */}
           <Card>
             <CardHeader>
               <CardTitle>Average Selling Price Trend</CardTitle>
@@ -294,14 +338,23 @@ export function AdminAnalytics({ cars, onBack }: AdminAnalyticsProps) {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
-                  <Tooltip formatter={(value) => [`$${Number(value).toLocaleString()}`, 'Avg Price']} />
-                  <Line type="monotone" dataKey="avgPrice" stroke="#10b981" strokeWidth={2} />
+                  <Tooltip
+                    formatter={(value) => [
+                      `$${Number(value).toLocaleString()}`,
+                      "Avg Price",
+                    ]}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="avgPrice"
+                    stroke="#10b981"
+                    strokeWidth={2}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
 
-          {/* Cumulative Revenue */}
           <Card>
             <CardHeader>
               <CardTitle>Cumulative Revenue (YTD)</CardTitle>
@@ -312,17 +365,25 @@ export function AdminAnalytics({ cars, onBack }: AdminAnalyticsProps) {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
-                  <Tooltip formatter={(value) => [`$${Number(value).toLocaleString()}`, 'Cumulative Revenue']} />
-                  <Line type="monotone" dataKey="cumulative" stroke="#8b5cf6" strokeWidth={2} />
+                  <Tooltip
+                    formatter={(value) => [
+                      `$${Number(value).toLocaleString()}`,
+                      "Cumulative Revenue",
+                    ]}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="cumulative"
+                    stroke="#8b5cf6"
+                    strokeWidth={2}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
-
-          
         </div>
 
-        {/* Top Performers */}
+        {/* Top performers */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
           <Card>
             <CardHeader>
@@ -331,7 +392,7 @@ export function AdminAnalytics({ cars, onBack }: AdminAnalyticsProps) {
             <CardContent>
               <div className="space-y-3">
                 {cars
-                  .filter((car) => car.status === 'sold')
+                  .filter((car) => car.status === "sold")
                   .slice(0, 5)
                   .map((car, index) => (
                     <div key={car.id} className="flex items-center justify-between">

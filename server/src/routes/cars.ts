@@ -14,7 +14,7 @@ const carSchema = z.object({
   mileage: z.number().int().nonnegative(),
   color: z.string().min(1),
   status: z.enum(["available", "sold", "pending"]),
-  vin: z.string().min(5), // adjust if you want strict VIN regex
+  vin: z.string().min(5),
   description: z.string().default(""),
   imageUrl: z.string().url(),
 });

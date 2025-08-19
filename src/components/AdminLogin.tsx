@@ -1,3 +1,4 @@
+// src/components/AdminLogin.tsx
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
@@ -9,11 +10,6 @@ type Props = {
   onCancel: () => void;
 };
 
-/**
- * Super-simple admin login.
- * Default password = "admin123"
- * Change the check below to whatever you want.
- */
 export function AdminLogin({ onLogin, onCancel }: Props) {
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
@@ -21,13 +17,15 @@ export function AdminLogin({ onLogin, onCancel }: Props) {
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const actionBtn =
+    "transition-all duration-200 border border-border shadow-sm hover:-translate-y-0.5 hover:shadow-md hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-primary/30";
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErr(null);
     setLoading(true);
 
-    // 🔐 Replace this with a real API call later
-    await new Promise((r) => setTimeout(r, 300)); // tiny delay to feel real
+    await new Promise((r) => setTimeout(r, 300)); // demo delay
 
     const ok =
       email.trim().length > 0 &&
@@ -54,6 +52,7 @@ export function AdminLogin({ onLogin, onCancel }: Props) {
                 size="icon"
                 onClick={onCancel}
                 aria-label="Close"
+                className="transition-all duration-200 hover:scale-105"
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -69,6 +68,7 @@ export function AdminLogin({ onLogin, onCancel }: Props) {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    className="transition-all duration-200 border border-border hover:border-primary/40 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-primary/30"
                   />
                 </div>
 
@@ -81,11 +81,11 @@ export function AdminLogin({ onLogin, onCancel }: Props) {
                       value={pw}
                       onChange={(e) => setPw(e.target.value)}
                       required
-                      className="pr-10"
+                      className="pr-10 transition-all duration-200 border border-border hover:border-primary/40 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-primary/30"
                     />
                     <button
                       type="button"
-                      className="absolute right-2 top-1/2 -translate-y-1/2 opacity-70 hover:opacity-100"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 opacity-70 hover:opacity-100 transition-opacity"
                       onClick={() => setShowPw((s) => !s)}
                       aria-label={showPw ? "Hide password" : "Show password"}
                     >
@@ -108,10 +108,23 @@ export function AdminLogin({ onLogin, onCancel }: Props) {
                 </div>
 
                 <div className="flex gap-2 pt-2">
-                  <Button type="submit" disabled={loading} className="flex-1">
+                  {/* Sign in now outlined + same hover/shadow as Cancel */}
+                  <Button
+                    type="submit"
+                    variant="outline"
+                    disabled={loading}
+                    className={`flex-1 ${actionBtn}`}
+                  >
                     {loading ? "Signing in..." : "Sign in"}
                   </Button>
-                  <Button type="button" variant="outline" onClick={onCancel}>
+
+                  {/* Cancel with the exact same styling */}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={onCancel}
+                    className={actionBtn}
+                  >
                     Cancel
                   </Button>
                 </div>
