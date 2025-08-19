@@ -1,5 +1,6 @@
+// server/src/index.ts
 import "dotenv/config";
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import morgan from "morgan";
 import cors from "cors";
 
@@ -8,11 +9,11 @@ import { analyticsRouter } from "./routes/analytics";
 
 const app = express();
 
-// ---- Config ----
+/* ----------------------------- Config ----------------------------- */
 const PORT = Number(process.env.PORT) || 4000;
 const CORS_ORIGIN = process.env.CORS_ORIGIN;
 
-// ---- Middleware ----
+/* --------------------------- Middleware --------------------------- */
 app.use(morgan("dev"));
 app.use(express.json());
 
@@ -20,39 +21,38 @@ app.use(express.json());
 // If you want to restrict, set CORS_ORIGIN=http://localhost:5173 in server/.env
 app.use(
   cors(
-    CORS_ORIGIN
+    CORS_ORIGIN && CORS_ORIGIN !== "*"
       ? { origin: CORS_ORIGIN }
-      : { origin: true } // allow all for local dev
+      : { origin: true } // allow all for local dev / wildcard
   )
 );
 
-// ---- Health / Root ----
-app.get("/", (_req, res) => res.json({ ok: true, service: "autotrackr-api" }));
-app.get("/health", (_req, res) => res.json({ ok: true }));
+/* ------------------------- Health / Root -------------------------- */
+app.get("/", (_req: Request, res: Response) =>
+  res.json({ ok: true, service: "autotrackr-api" })
+);
+app.get("/health", (_req: Request, res: Response) => res.json({ ok: true }));
 
-// ---- Routes ----
+/* ----------------------------- Routes ----------------------------- */
 app.use("/cars", carsRouter);
 app.use("/analytics", analyticsRouter);
 
-// ---- 404 ----
-app.use((_req, res) => {
+/* ------------------------------ 404 -------------------------------- */
+app.use((_req: Request, res: Response) => {
   res.status(404).json({ error: "Not Found" });
 });
 
-// ---- Error Handler ----
+/* -------------------------- Error Handler ------------------------- */
 app.use(
-  (
-    err: any,
-    _req: express.Request,
-    res: express.Response,
-    _next: express.NextFunction
-  ) => {
+  (err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+    // eslint-disable-next-line no-console
     console.error(err);
     res.status(500).json({ error: "Internal Server Error" });
   }
 );
 
-// ---- Start ----
+/* ----------------------------- Start ------------------------------ */
 app.listen(PORT, () => {
+  // eslint-disable-next-line no-console
   console.log(`API listening on http://localhost:${PORT}`);
 });
