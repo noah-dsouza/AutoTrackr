@@ -13,7 +13,8 @@ import type { Car } from "./CarInventoryDashboard";
 
 type Props = {
   car: Car | null;
-  onSubmit: (carData: Omit<Car, "id">) => void;
+  // allow async or sync submit
+  onSubmit: (carData: Omit<Car, "id">) => Promise<void> | void;
   onCancel: () => void;
 };
 
@@ -34,21 +35,24 @@ export function CarForm({ car, onSubmit, onCancel }: Props) {
       "https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=800&auto=format&fit=crop"
   );
 
-  // EXACT same border/hover/shadow style used on the dashboard action buttons
+  const [submitting, setSubmitting] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  // shared hover/lift/shadow + white border
   const actionBtn =
     "transition-all duration-200 border border-border shadow-sm hover:-translate-y-0.5 hover:shadow-md hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-primary/30";
 
-  // Avoid duplicate brands
   const normalizeMake = (s: string) =>
     s.trim().replace(/\s+/g, " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
 
   const stripLeadingZero = (v: string) => v.replace(/^0+(?=\d)/, "");
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setErr(null);
 
-    if (!make || !model) return alert("Make and Model are required.");
-    if (!year) return alert("Year is required.");
+    if (!make || !model) return setErr("Make and Model are required.");
+    if (!year) return setErr("Year is required.");
 
     const payload: Omit<Car, "id"> = {
       make: normalizeMake(make),
@@ -63,7 +67,15 @@ export function CarForm({ car, onSubmit, onCancel }: Props) {
       imageUrl,
     };
 
-    onSubmit(payload);
+    try {
+      setSubmitting(true);
+      await Promise.resolve(onSubmit(payload));
+      // parent (dashboard) will close the form on success
+    } catch (e: any) {
+      setErr(e?.message || "Failed to save vehicle");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -76,6 +88,14 @@ export function CarForm({ car, onSubmit, onCancel }: Props) {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="space-y-2 md:col-span-2">
+                  {err && (
+                    <div className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                      {err}
+                    </div>
+                  )}
+                </div>
+
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Make</label>
                   <Input value={make} onChange={(e) => setMake(e.target.value)} required />
@@ -94,7 +114,7 @@ export function CarForm({ car, onSubmit, onCancel }: Props) {
                     step="1"
                     min={1886}
                     max={2100}
-                    placeholder="e.g. 2024"
+                    placeholder="e.g. 2025"
                     value={year}
                     onChange={(e) => setYear(stripLeadingZero(e.target.value))}
                     required
@@ -166,12 +186,13 @@ export function CarForm({ car, onSubmit, onCancel }: Props) {
                 </div>
 
                 <div className="md:col-span-2 flex gap-2 pt-2">
-                  {/* Add Vehicle — outlined with white-ish border + hover shadow */}
-                  <Button type="submit" variant="outline" className={`flex-1 ${actionBtn}`}>
-                    {car ? "Save Changes" : "Add Vehicle"}
+                  <Button
+                    type="submit"
+                    disabled={submitting}
+                    className={`flex-1 ${actionBtn}`}
+                  >
+                    {submitting ? "Saving…" : car ? "Save Changes" : "Add Vehicle"}
                   </Button>
-
-                  {/* Cancel — same outline + hover/shadow */}
                   <Button
                     type="button"
                     variant="outline"

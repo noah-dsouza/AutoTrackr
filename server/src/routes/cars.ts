@@ -1,57 +1,84 @@
 import { Router, Request, Response } from "express";
 import { prisma } from "../lib/prisma";
-import type { Prisma } from "@prisma/client";
 
 export const carsRouter = Router();
 
-/** GET /cars - list cars newest first */
+const toNum = (v: unknown, fallback = 0) => {
+  const n = Number(v);
+  return Number.isFinite(n) ? n : fallback;
+};
+
+/* GET /cars */
 carsRouter.get("/", async (_req: Request, res: Response) => {
   try {
     const cars = await prisma.car.findMany({ orderBy: { createdAt: "desc" } });
     res.json(cars);
   } catch (err) {
+    console.error("GET /cars failed", err);
     res.status(500).json({ error: "Failed to fetch cars" });
   }
 });
 
-/** POST /cars - create a car */
-carsRouter.post(
-  "/",
-  async (req: Request<unknown, unknown, Prisma.CarCreateInput>, res: Response) => {
-    try {
-      const data = req.body;
-      const created = await prisma.car.create({ data });
-      res.status(201).json(created);
-    } catch (err) {
-      res.status(400).json({ error: "Failed to create car" });
-    }
-  }
-);
-
-/** PUT /cars/:id - update a car */
-carsRouter.put(
-  "/:id",
-  async (
-    req: Request<{ id: string }, unknown, Prisma.CarUpdateInput>,
-    res: Response
-  ) => {
-    const { id } = req.params;
-    try {
-      const updated = await prisma.car.update({ where: { id }, data: req.body });
-      res.json(updated);
-    } catch (err) {
-      res.status(400).json({ error: "Failed to update car" });
-    }
-  }
-);
-
-/** DELETE /cars/:id - delete a car */
-carsRouter.delete("/:id", async (req: Request<{ id: string }>, res: Response) => {
-  const { id } = req.params;
+/* POST /cars */
+carsRouter.post("/", async (req: Request, res: Response) => {
   try {
+    const b = req.body ?? {};
+    const created = await prisma.car.create({
+      data: {
+        make: String(b.make ?? ""),
+        model: String(b.model ?? ""),
+        year: toNum(b.year),
+        price: toNum(b.price),
+        mileage: toNum(b.mileage),
+        color: String(b.color ?? ""),
+        status: (b.status ?? "available") as "available" | "pending" | "sold",
+        vin: String(b.vin ?? ""),
+        description: String(b.description ?? ""),
+        imageUrl: String(b.imageUrl ?? ""),
+      },
+    });
+    res.status(201).json(created);
+  } catch (err: any) {
+    console.error("POST /cars failed", err);
+    res.status(500).json({ error: err?.message || "Failed to create car" });
+  }
+});
+
+/* PUT /cars/:id */
+carsRouter.put("/:id", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const b = req.body ?? {};
+    const updated = await prisma.car.update({
+      where: { id },
+      data: {
+        make: b.make,
+        model: b.model,
+        year: toNum(b.year),
+        price: toNum(b.price),
+        mileage: toNum(b.mileage),
+        color: b.color,
+        status: (b.status ?? "available") as "available" | "pending" | "sold",
+        vin: b.vin,
+        description: b.description,
+        imageUrl: b.imageUrl,
+      },
+    });
+    res.json(updated);
+  } catch (err) {
+    console.error("PUT /cars failed", err);
+    res.status(500).json({ error: "Failed to update car" });
+  }
+});
+
+/* DELETE /cars/:id */
+carsRouter.delete("/:id", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
     await prisma.car.delete({ where: { id } });
     res.status(204).end();
   } catch (err) {
-    res.status(400).json({ error: "Failed to delete car" });
+    console.error("DELETE /cars failed", err);
+    res.status(500).json({ error: "Failed to delete car" });
   }
 });
