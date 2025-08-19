@@ -1,9 +1,13 @@
+// server/prisma/seed.ts
 import { PrismaClient } from "@prisma/client";
-
 const prisma = new PrismaClient();
 
 async function main() {
-  await prisma.car.deleteMany();
+  const count = await prisma.car.count();
+  if (count > 0) {
+    console.log(`Seed skipped (cars already in DB: ${count}).`);
+    return;
+  }
 
   const now = new Date();
 
@@ -64,18 +68,18 @@ async function main() {
         description:
           "Luxury sedan with premium features and smooth performance",
         imageUrl:
-          "https://media.easierad.ie/eyJidWNrZXQiOiJlYXNpZXJhZC1pbWFnZXNlcnZlci1jYWNoZSIsImVkaXRzIjp7InRvRm9ybWF0IjoianBlZyIsInJlc2l6ZSI6eyJmaXQiOiJpbnNpZGUiLCJ3aWR0aCI6MTIwMCwiaGVpZ2h0Ijo5MDB9fSwia2V5IjoiNTExODk2LzI2MTA1ODI2LzI1MTc3NjExMC5qcGcifQ==?signature=78e829f9f2c294ae44c4f2ee9b3e952734b44b876460fb3a47490ebf2cae6055",
+          "https://media.easierad.ie/eyJidWNrZXQiOiJlYXNpZXJhZC1pbWZnZXNlcnZlci1jYWNoZSIsImVkaXRzIjp7InRvRm9ybWF0IjoianBlZyIsInJlc2l6ZSI6eyJmaXQiOiJpbnNpZGUiLCJ3aWR0aCI6MTIwMCwiaGVpZ2h0Ijo5MDB9fSwia2V5IjoiNTExODk2LzI2MTA1ODI2LzI1MTc3NjExMC5qcGcifQ==",
         createdAt: new Date(new Date(now).setMonth(now.getMonth() - 6)),
         soldAt: new Date(new Date(now).setMonth(now.getMonth() - 5)),
       },
     ],
   });
+
+  console.log("Seeded cars table.");
 }
 
 main()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
+  .then(async () => prisma.$disconnect())
   .catch(async (e) => {
     console.error(e);
     await prisma.$disconnect();
