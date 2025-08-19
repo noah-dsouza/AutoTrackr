@@ -11,6 +11,7 @@ const app = express();
 
 /* ----------------------------- Config ----------------------------- */
 const PORT = Number(process.env.PORT) || 4000;
+const HOST = process.env.HOST ?? "0.0.0.0"; // bind explicitly for Render
 const CORS_ORIGIN = process.env.CORS_ORIGIN;
 
 /* --------------------------- Middleware --------------------------- */
@@ -52,7 +53,7 @@ app.use(
 );
 
 /* ----------------------------- Start ------------------------------ */
-app.listen(PORT, () => {
+app.listen(PORT, HOST, () => {
   // eslint-disable-next-line no-console
-  console.log(`API listening on http://localhost:${PORT}`);
+  console.log(`API listening on http://${HOST}:${PORT}`);
 });

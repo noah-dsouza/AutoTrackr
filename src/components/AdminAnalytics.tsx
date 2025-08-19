@@ -69,9 +69,8 @@ const generateMockSalesData = () => {
 const mockSalesData = generateMockSalesData();
 
 export function AdminAnalytics({ cars, onBack }: AdminAnalyticsProps) {
-  const [timeFilter, setTimeFilter] = useState<"mtd" | "qtd" | "ytd" | "custom">(
-    "ytd"
-  );
+  const [timeFilter, setTimeFilter] =
+    useState<"mtd" | "qtd" | "ytd" | "custom">("ytd");
 
   // Key metrics
   const totalInventory = cars.length;
@@ -130,7 +129,11 @@ export function AdminAnalytics({ cars, onBack }: AdminAnalyticsProps) {
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
-          <Button variant="ghost" onClick={onBack} className="mb-4">
+          <Button
+            variant="ghost"
+            onClick={onBack}
+            className="mb-4 transition-all duration-200 shadow-sm hover:-translate-y-0.5 hover:shadow-md hover:bg-white/5"
+          >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Inventory
           </Button>
